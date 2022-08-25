@@ -1,4 +1,4 @@
-function [q,d,c,Ceq] = Bargaining(mb,ms,m, V, x_0, mupper, theta,mu,tau) ;
+function [q,d,c,Ceq] = Bargaining(mb,ms,m, V, x_0, mupper, theta,mu) ;
 %this function computes the solution to a bargaining problem assuming that
 %the buyer has all the bargaining power. I
 
@@ -17,6 +17,7 @@ function [q,d,c,Ceq] = Bargaining(mb,ms,m, V, x_0, mupper, theta,mu,tau) ;
 % Ceq: value of money
 
 
+tau=mu
 
 
 objective=@(x) -(Utility(x(1))+interp1(m,V,(mb-x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(mb+tau)/(1+mu),'spline',"extrap"));
@@ -43,8 +44,8 @@ ub=[1,min(mb,mupper-ms)];
 
     function [C, Ceq] = circlecon(x); % the nonlinear constraint have the defined as a funcion
  C=[]; %no nonlinear inequalities
-  Ceq=theta*(interp1(m,V,(ms+x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(ms+tau)/(1+mu),'spline',"extrap")-cost_function(x(1)))...
-      -(1-theta)*(Utility(x(1))+interp1(m,V,(mb-x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(mb+tau)/(1+mu),'spline',"extrap"));
+  Ceq=theta*(interp1(m,V,(ms+x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(ms+tau)/(1),'spline',"extrap")-cost_function(x(1)))...
+      -(1-theta)*(Utility(x(1))+interp1(m,V,mb-x(2),'spline',"extrap")-interp1(m,V,mb,'spline',"extrap"));
       % nonlinear equality: the seller is indifferent between accepting deal and rejecting. 
  end
 Cons=@circlecon; %we call the save function under  Cons
