@@ -19,7 +19,8 @@ function [q,d,c,Ceq] = Bargaining(mb,ms,m, V, x_0, mupper, theta,mu,tau) ;
 
 
 
-objective=@(x) -(Utility(x(1))+interp1(m,V,(mb-x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(mb+tau)/(1+mu),'spline',"extrap"));
+objective=@(x) -1*((Utility(x(1))+interp1(m,V,(mb-x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(mb+tau)/(1+mu),'spline',"extrap"))^(theta)...
+    *(interp1(m,V,(ms+x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(ms+tau)/(1+mu),'spline',"extrap")-cost_function(x(1)))^(1-theta));
 % The value of the buyer consists of his utility of consuming and his
 % continuation value of exiting with a given amount of money. Since the
 % value function is defined on the grid we use interpolation to get the
@@ -42,9 +43,9 @@ ub=[1,min(mb,mupper-ms)];
 
 
     function [C, Ceq] = circlecon(x); % the nonlinear constraint have the defined as a funcion
- C=[]; %no nonlinear inequalities
-  Ceq=theta*(interp1(m,V,(ms+x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(ms+tau)/(1+mu),'spline',"extrap")-cost_function(x(1)))...
-      -(1-theta)*(Utility(x(1))+interp1(m,V,(mb-x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(mb+tau)/(1+mu),'spline',"extrap"));
+ C=[-(interp1(m,V,(ms+x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(ms+tau)/(1+mu),'spline',"extrap")-cost_function(x(1)))...
+     -(Utility(x(1))+interp1(m,V,(mb-x(2)+tau)/(1+mu),'spline',"extrap")-interp1(m,V,(mb+tau)/(1+mu),'spline',"extrap"))]; %no nonlinear inequalities
+  Ceq=[];
       % nonlinear equality: the seller is indifferent between accepting deal and rejecting. 
  end
 Cons=@circlecon; %we call the save function under  Cons
